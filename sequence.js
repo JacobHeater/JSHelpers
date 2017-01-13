@@ -1,0 +1,44 @@
+(function () {
+
+    'use strict';
+
+    /**
+     * Runs the given array of tasks in order and ensures that
+     * asynchronous tasks are done in the order they are given.
+     * 
+     * @param {Function[]} tasks The tasks to run in sequential order.
+     * @param {Function} complete A callback to get output when all tasks are done.
+     */
+    function sequence(tasks, complete) {
+        if (Array.isArray(tasks)) {
+            var output = [];
+            iterate();
+
+            function done(outVal) {
+                if (outVal) {
+                    output.push(outVal);
+                }
+                iterate();
+            }
+
+            function iterate() {
+                var currentTask = tasks.shift();
+
+                if (typeof currentTask === 'function') {
+                    currentTask(done);
+                } else if (!tasks.length && typeof complete === 'function') {
+                    complete(output);
+                }
+            }
+        }
+    }
+
+    if (typeof define === 'function') {
+        define('sequence', function sequenceModule() {
+            return sequence;
+        });
+    } else if ('exports' in module) {
+        module.exports = sequence;
+    }
+
+})();

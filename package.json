@@ -1,0 +1,29 @@
+{
+  "name": "jshelpers",
+  "version": "0.0.1",
+  "description": "A collection of JavaScript helpers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacobheater/JSHelpers.git"
+  },
+  "keywords": [
+    "JS",
+    "JavaScript",
+    "helpers"
+  ],
+  "author": "Jacob Heater",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jacobheater/JSHelpers/issues"
+  },
+  "homepage": "https://github.com/jacobheater/JSHelpers#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-util": "^3.0.8"
+  }
+}
