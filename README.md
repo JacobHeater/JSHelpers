@@ -1,3 +1,3 @@
-# JS Helpers
+# JS Helpers ![](https://api.travis-ci.org/JacobHeater/JSHelpers.svg?branch=master)
 
 A library of JavaScript helpers...
