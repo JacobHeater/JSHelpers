@@ -33,11 +33,11 @@
         }
     }
 
-    if (typeof define === 'function') {
+    if (typeof define === 'function' && define.amd) {
         define('sequence', function sequenceModule() {
             return sequence;
         });
-    } else if ('exports' in module) {
+    } else if (typeof module !== 'undefined') {
         module.exports = sequence;
     }
 
