@@ -33,7 +33,7 @@
                         done(vars.WORLD);
                     }, 100);
                 }
-            ], val => parallelOutput = val);
+            ]).done(val => parallelOutput = val);
         });
 
         it('Should run the given tasks parallely and get the expected output', () => {
