@@ -7,10 +7,10 @@
      * asynchronous tasks are done in the order they are given.
      * 
      * @param {Function[]} tasks The tasks to run in sequential order.
-     * @returns {Object} An object that exposes a setter for the done function.
+     * @returns {Object} An object that exposes a setter for the complete function.
      */
     function sequence(tasks) {
-        var done = function noop() { };
+        var complete = function noop() { };
         if (Array.isArray(tasks)) {
             //We need to make a copy so that we don't
             //inadvertently modify the array.
@@ -31,15 +31,15 @@
                 if (typeof currentTask === 'function') {
                     currentTask(done);
                 } else if (!tasks.length) {
-                    done(output);
+                    complete(output);
                 }
             }
         }
         
         return {
-          done: function setDone(fn) {
+          done: function setComplete(fn) {
               if (typeof fn === 'function') {
-                done = fn;   
+                complete = fn;   
               }
               return this;
           }
