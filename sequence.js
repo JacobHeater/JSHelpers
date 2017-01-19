@@ -9,7 +9,8 @@
      * @param {Function[]} tasks The tasks to run in sequential order.
      * @param {Function} complete A callback to get output when all tasks are done.
      */
-    function sequence(tasks, complete) {
+    function sequence(tasks) {
+        var done = function noop() { };
         if (Array.isArray(tasks)) {
             //We need to make a copy so that we don't
             //inadvertently modify the array.
@@ -29,11 +30,20 @@
 
                 if (typeof currentTask === 'function') {
                     currentTask(done);
-                } else if (!tasks.length && typeof complete === 'function') {
-                    complete(output);
+                } else if (!tasks.length) {
+                    done(output);
                 }
             }
         }
+        
+        return {
+          done: function setDone(fn) {
+              if (typeof fn === 'function') {
+                done = fn;   
+              }
+              return this;
+          }
+        };
     }
 
     if (typeof define === 'function' && define.amd) {
