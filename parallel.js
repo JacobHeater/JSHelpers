@@ -8,9 +8,10 @@
      * and puts any output into a output array.
      * 
      * @param {Function[]} tasks The tasks to run in parallel.
-     * @param {Function} complete A callback to get output when all tasks have finished running.
+     * @returns {Object} An object that exposes a setter for a done function.
      */
-    function parallel(tasks, complete) {
+    function parallel(tasks) {
+        var done = function noop() { };
         if (Array.isArray(tasks)) {
             var output = [];
             var nTasks = tasks.length;
@@ -26,11 +27,19 @@
                     output.push(outVal);
                 }
                 nDoneTasks++;
-                if (nDoneTasks === nTasks && typeof complete === 'function') {
-                    complete(output);
+                if (nDoneTasks === nTasks) {
+                    done(output);
                 }
             }
         }
+        return {
+          done: function setDone(fn) {
+            if (typeof fn === 'function') {
+              done = fn;   
+            }
+              return this;
+          }
+        };
     }
 
 
