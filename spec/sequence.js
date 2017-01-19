@@ -29,7 +29,7 @@
                         go();
                     }, 0);
                 }
-            ], val => sequenceOutput = val);
+            ]).done(val => sequenceOutput = val);
         });
 
         it('Runs synchronous tasks in order, and produces expected output', () => {
