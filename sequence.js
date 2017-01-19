@@ -7,7 +7,7 @@
      * asynchronous tasks are done in the order they are given.
      * 
      * @param {Function[]} tasks The tasks to run in sequential order.
-     * @param {Function} complete A callback to get output when all tasks are done.
+     * @returns {Object} An object that exposes a setter for the done function.
      */
     function sequence(tasks) {
         var done = function noop() { };
