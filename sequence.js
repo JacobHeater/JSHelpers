@@ -11,6 +11,9 @@
      */
     function sequence(tasks, complete) {
         if (Array.isArray(tasks)) {
+            //We need to make a copy so that we don't
+            //inadvertently modify the array.
+            tasks = tasks.slice(0);
             var output = [];
             iterate();
 
