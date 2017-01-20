@@ -4,7 +4,7 @@
 
     const sequence = require('../sequence.js');
     const vars = require('./vars.js');
-    
+
     var asyncOutput = '';
     var sequenceOutput = '';
 
@@ -14,7 +14,7 @@
             //We have to reset this back to default before each test run.
             asyncOutput = '';
             sequenceOutput = '';
-            
+
             sequence([
                 done => {
                     setTimeout(() => {
@@ -47,6 +47,25 @@
             ]);
 
             expect(output).toEqual(vars.HELLO_WORLD);
+        });
+
+        it('Runs synchronous tasks in order providing the output from each prior task', () => {
+            var output = '';
+
+            sequence([
+                (done, data) => {
+                    expect(data.length).toEqual(0);
+                    done(vars.HELLO);
+                },
+                (done, data) => {
+                    expect(data[0]).toEqual(vars.HELLO);
+                    done(vars.WORLD);
+                },
+                (done, data) => {
+                    expect(data[1]).toEqual(vars.WORLD);
+                    done();
+                }
+            ], data => expect(data.join('')).toEqual(vars.HELLO_WORLD));
         });
 
         it('Runs asynchronous tasks in order, and produces expected output', () => {

@@ -1,5 +1,5 @@
-(function() {
-    
+(function () {
+
     'use strict';
 
 
@@ -7,19 +7,26 @@
      * Executes the given tasks in parallel fashion without regard to task order
      * and puts any output into a output array.
      * 
-     * @param {Function[]} tasks The tasks to run in parallel.
-     * @returns {Object} An object that exposes a setter for a complete function.
+     * @param {Function[]} tasks   The tasks to run in parallel.
+     * 
+     * @param {Function=} complete An optional function to set complete to
+     *                             in the event that all tasks are synchronous.
+     * 
+     * @returns {Object}           An object that exposes a setter for a complete function.
      */
-    function parallel(tasks) {
-        var complete = function noop() { };
+    function parallel(tasks, complete) {
+        var _complete = typeof complete === 'function' ? complete : function noop() {};
         if (Array.isArray(tasks)) {
+            //Make sure we only deal with functions.
+            tasks = tasks.filter(function (t) {
+                return typeof t === 'function';
+            });
+
             var output = [];
             var nTasks = tasks.length;
             var nDoneTasks = 0;
-            tasks.forEach(function(t) {
-                if (typeof t === 'function') {
-                    t(done);
-                }
+            tasks.forEach(function (t) {
+                t(done, output);
             });
 
             function done(outVal) {
@@ -28,17 +35,18 @@
                 }
                 nDoneTasks++;
                 if (nDoneTasks === nTasks) {
-                    complete(output);
+                    _complete(output);
                 }
             }
         }
+
         return {
-          done: function setComplete(fn) {
-            if (typeof fn === 'function') {
-              complete = fn;   
+            done: function setComplete(fn) {
+                if (typeof fn === 'function') {
+                    _complete = fn;
+                }
+                return this;
             }
-              return this;
-          }
         };
     }
 
@@ -49,6 +57,8 @@
         });
     } else if (typeof module !== 'undefined') {
         module.exports = parallel;
+    } else if (typeof window !== 'undefined') {
+        window.parallel = parallel;
     }
 
 })();
