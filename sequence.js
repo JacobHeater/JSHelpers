@@ -32,23 +32,45 @@
             tasks = tasks.slice(0).filter(isFunc);
 
             var output = [];
-            iterate();
+            var nTasks = tasks.length;
+            var doneTasks = 0;
 
-            function done(outVal) {
-                if (outVal) {
-                    output.push(outVal);
-                }
-                iterate();
-            }
+            tasks.forEach(function(t, i) {
+                t(wrap(i), output);
+            });
 
-            function iterate() {
-                var currentTask = tasks.shift();
+            /**
+             * Creates a closure that tracks the index of the function that was called.
+             * This ensures that the data that is added to the output array is added
+             * in the order in which the function was called. The main benefit of this
+             * approach is that we can still run the tasks in parallel, but ensure that
+             * the data that they return is returned as if it was synchronous. This also
+             * ensures that long running async operations won't tie up other tasks while
+             * we're waiting for them to complete.
+             * 
+             * @param {Number} idx The index of the task being invoked.
+             * 
+             * @returns {Function} A callback for when the task is done.
+             */
+            function wrap(idx) {
 
-                if (currentTask) {
-                    currentTask(done, output);
-                } else if (!tasks.length) {
-                    _complete(output);
-                }
+                /**
+                 * A callback for when the task is done running where the user can
+                 * provide optional output from the task.
+                 * 
+                 * @param {any=} outVal The optional output of the task.
+                 */
+                return function done(outVal) {
+
+                    output[idx] = outVal;
+                    doneTasks++;
+
+                    //If the total number of processed tasks === the total number
+                    //of queued tasks, then we'll assume we're done here.
+                    if (doneTasks === nTasks) {
+                        _complete(output);
+                    }
+                };
             }
         }
 
