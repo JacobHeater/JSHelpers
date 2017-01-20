@@ -2,6 +2,16 @@
 
     'use strict';
 
+    if (typeof define === 'function' && define.amd) {
+        define('sequence', function sequenceModule() {
+            return sequence;
+        });
+    } else if (typeof module !== 'undefined') {
+        module.exports = sequence;
+    } else if (typeof window !== 'undefined') {
+        window.sequence = sequence;
+    }
+
     /**
      * Runs the given array of tasks in order and ensures that
      * asynchronous tasks are done in the order they are given.
@@ -14,14 +24,12 @@
      * @returns {Object}           An object that exposes a setter for the complete function.
      */
     function sequence(tasks, complete) {
-        var _complete = typeof complete === 'function' ? complete : function noop() {};
+        var _complete = isFunc(complete) ? complete : function noop() {};
 
         if (Array.isArray(tasks)) {
             //We need to make a copy so that we don't
             //inadvertently modify the array.
-            tasks = tasks.slice(0).filter(function (t) {
-                return typeof t === 'function';
-            });
+            tasks = tasks.slice(0).filter(isFunc);
 
             var output = [];
             iterate();
@@ -54,7 +62,7 @@
              * @returns {Object}    The current object instance.
              */
             done: function setComplete(fn) {
-                if (typeof fn === 'function') {
+                if (isFunc(fn)) {
                     _complete = fn;
                 }
                 return this;
@@ -62,14 +70,15 @@
         };
     }
 
-    if (typeof define === 'function' && define.amd) {
-        define('sequence', function sequenceModule() {
-            return sequence;
-        });
-    } else if (typeof module !== 'undefined') {
-        module.exports = sequence;
-    } else if (typeof window !== 'undefined') {
-        window.sequence = sequence;
+    /**
+     * Determines if the given object is a function.
+     * 
+     * @param {any} fn The object to check the type of.
+     * 
+     * @returns {Boolean}
+     */
+    function isFunc(fn) {
+        return typeof fn === 'function';
     }
 
 })();
