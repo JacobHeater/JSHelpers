@@ -17,13 +17,11 @@
             sequence([
                 done => {
                     setTimeout(() => {
-                        console.log('I have started');
                         done(vars.HELLO);
                     }, 10);
                 },
                 done => {
                     setTimeout(() => {
-                        console.log('I have started');
                         done(vars.WORLD);
                     }, 0);
                 }
