@@ -12,24 +12,24 @@
 
         beforeEach(go => {
             //We have to reset this back to default before each test run.
-            asyncOutput = '';
             sequenceOutput = '';
 
             sequence([
                 done => {
                     setTimeout(() => {
-                        asyncOutput += vars.HELLO;
                         done(vars.HELLO);
                     }, 10);
                 },
                 done => {
                     setTimeout(() => {
-                        asyncOutput += vars.WORLD;
                         done(vars.WORLD);
-                        go();
                     }, 0);
                 }
-            ]).done(val => sequenceOutput = val);
+            ]).done(val => {
+                sequenceOutput = val;
+                go();
+            });
+
         });
 
         it('Runs synchronous tasks in order, and produces expected output', () => {
@@ -70,7 +70,6 @@
 
         it('Runs asynchronous tasks in order, and produces expected output', () => {
 
-            expect(asyncOutput).toEqual(vars.HELLO_WORLD);
             expect(sequenceOutput.join('')).toEqual(vars.HELLO_WORLD);
 
         });
