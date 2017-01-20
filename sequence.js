@@ -2,19 +2,35 @@
 
     'use strict';
 
+    if (typeof define === 'function' && define.amd) {
+        define('sequence', function sequenceModule() {
+            return sequence;
+        });
+    } else if (typeof module !== 'undefined') {
+        module.exports = sequence;
+    } else if (typeof window !== 'undefined') {
+        window.sequence = sequence;
+    }
+
     /**
      * Runs the given array of tasks in order and ensures that
      * asynchronous tasks are done in the order they are given.
      * 
-     * @param {Function[]} tasks The tasks to run in sequential order.
-     * @returns {Object} An object that exposes a setter for the complete function.
+     * @param {Function[]} tasks   The tasks to run in sequential order.
+     * 
+     * @param {Function=} complete An optional function to set complete to
+     *                             in the event that all tasks are synchronous.
+     * 
+     * @returns {Object}           An object that exposes a setter for the complete function.
      */
-    function sequence(tasks) {
-        var complete = function noop() { };
+    function sequence(tasks, complete) {
+        var _complete = isFunc(complete) ? complete : function noop() {};
+
         if (Array.isArray(tasks)) {
             //We need to make a copy so that we don't
             //inadvertently modify the array.
-            tasks = tasks.slice(0);
+            tasks = tasks.slice(0).filter(isFunc);
+
             var output = [];
             iterate();
 
@@ -28,30 +44,41 @@
             function iterate() {
                 var currentTask = tasks.shift();
 
-                if (typeof currentTask === 'function') {
-                    currentTask(done);
+                if (currentTask) {
+                    currentTask(done, output);
                 } else if (!tasks.length) {
-                    complete(output);
+                    _complete(output);
                 }
             }
         }
-        
+
         return {
-          done: function setComplete(fn) {
-              if (typeof fn === 'function') {
-                complete = fn;   
-              }
-              return this;
-          }
+            /**
+             * A setter to set the complete function when all tasks have been
+             * processed.
+             * 
+             * @param {Function} fn The function to set complete to.
+             * 
+             * @returns {Object}    The current object instance.
+             */
+            done: function setComplete(fn) {
+                if (isFunc(fn)) {
+                    _complete = fn;
+                }
+                return this;
+            }
         };
     }
 
-    if (typeof define === 'function' && define.amd) {
-        define('sequence', function sequenceModule() {
-            return sequence;
-        });
-    } else if (typeof module !== 'undefined') {
-        module.exports = sequence;
+    /**
+     * Determines if the given object is a function.
+     * 
+     * @param {any} fn The object to check the type of.
+     * 
+     * @returns {Boolean}
+     */
+    function isFunc(fn) {
+        return typeof fn === 'function';
     }
 
 })();
