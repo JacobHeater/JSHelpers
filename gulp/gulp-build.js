@@ -11,7 +11,8 @@
         gulp
             .src([
                 './parallel.js',
-                './sequence.js'
+                './sequence.js',
+                './promise.js'
             ])
             .pipe(uglify({
                 preserveComments: 'license'
