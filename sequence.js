@@ -65,45 +65,48 @@ SOFTWARE.
             tasks = tasks.slice(0).filter(isFunc);
 
             var output = [];
-            var nTasks = tasks.length;
-            var doneTasks = 0;
+            var idx;
+            var nxt;
+            var task;
 
-            tasks.forEach(function(t, i) {
-                t(wrap(i), output);
-            });
+            if (tasks.length) {
+                //Begin iterating over the task array at index 0.
+                iterate(0);
+            }
 
             /**
-             * Creates a closure that tracks the index of the function that was called.
-             * This ensures that the data that is added to the output array is added
-             * in the order in which the function was called. The main benefit of this
-             * approach is that we can still run the tasks in parallel, but ensure that
-             * the data that they return is returned as if it was synchronous. This also
-             * ensures that long running async operations won't tie up other tasks while
-             * we're waiting for them to complete.
+             * An iterator that iterates over the tasks array, and calls the tasks
+             * in sequence.
              * 
-             * @param {Number} idx The index of the task being invoked.
+             * @private
              * 
-             * @returns {Function} A callback for when the task is done.
+             * @param {Number} i The zero-based index of the task to lookup.
              */
-            function wrap(idx) {
+            function iterate(i) {
+                idx = i;
+                task = tasks[idx];
+                if (isFunc(task)) {
+                    task(done, output);
+                }
+            }
 
-                /**
-                 * A callback for when the task is done running where the user can
-                 * provide optional output from the task.
-                 * 
-                 * @param {any=} outVal The optional output of the task.
-                 */
-                return function done(outVal) {
-
-                    output[idx] = outVal;
-                    doneTasks++;
-
-                    //If the total number of processed tasks === the total number
-                    //of queued tasks, then we'll assume we're done here.
-                    if (doneTasks === nTasks) {
-                        _complete(output);
-                    }
-                };
+            /**
+             * A callback to provide to the task to call when the task has been completed,
+             * thereby notifying us that we can proceed to call the next task.
+             * 
+             * @private
+             * 
+             * @param {any=} outVal An optional return value to add to the output array.
+             */
+            function done(outVal) {
+                output[idx] = outVal;
+                nxt = idx + 1;
+                task = tasks[nxt];
+                if (isFunc(task)) {
+                    iterate(nxt);
+                } else {
+                    _complete(output);
+                }
             }
         }
 
