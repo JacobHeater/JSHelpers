@@ -5,7 +5,12 @@
     const gulp = require('gulp');
     const gutil = require('gulp-util');
     const sequence = require('../sequence.js');
+    const fs = require('fs');
 
-    gulp.task('unit-test', ['test-sequence', 'test-parallel']);
+    const files = fs.readdirSync('gulp').filter(f => f.match(/gulp-test/gi));
+
+    const tasks = files.map(f => f.replace(/gulp-|\.js/gi, ''));
+
+    gulp.task('unit-test', tasks);
 
 })();
