@@ -31,7 +31,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-(function() {
+(function () {
 
     'use strict';
 
@@ -143,18 +143,20 @@ SOFTWARE.
          * @return {$Promise} The current $Promise instance.
          */
         this.resolve = function notify() {
-            pending = false;
-            var args = arguments;
+            if (pending) {
+                pending = false;
+                var args = arguments;
 
-            //Iterate over the callstack and pass along all arguments to each function.
-            iterateStack(callstack, function(fn) {
-                fn.apply(null, args);
-            });
-            
-            //Iterate over the always callstack and pass along all arguments to each function.
-            iterateStack(alwaysHandlers, function(fn) {
-                fn.apply(null, args);
-            });
+                //Iterate over the callstack and pass along all arguments to each function.
+                iterateStack(callstack, function (fn) {
+                    fn.apply(null, args);
+                });
+
+                //Iterate over the always callstack and pass along all arguments to each function.
+                iterateStack(alwaysHandlers, function (fn) {
+                    fn.apply(null, args);
+                });
+            }
 
             return this; //Chainable API
         };
@@ -167,21 +169,23 @@ SOFTWARE.
          * 
          * @return {$Promise} The current $Promise instance.
          */
-        this.reject = function() {
-            pending = false;
-            var args = arguments;
+        this.reject = function () {
+            if (pending) {
+                pending = false;
+                var args = arguments;
 
-            //Iterate over all of the error handlers and pass along the arguments to those
-            //functions.
-            iterateStack(errorHandlers, function(fn) {
-                fn.apply(null, args);
-            });
+                //Iterate over all of the error handlers and pass along the arguments to those
+                //functions.
+                iterateStack(errorHandlers, function (fn) {
+                    fn.apply(null, args);
+                });
 
-            //Iterate over all of the always handlers and pass along the arguments to those
-            //functions.
-            iterateStack(alwaysHandlers, function(fn) {
-                fn.apply(null, args);
-            });
+                //Iterate over all of the always handlers and pass along the arguments to those
+                //functions.
+                iterateStack(alwaysHandlers, function (fn) {
+                    fn.apply(null, args);
+                });
+            }
 
             return this; //Chainable API
         };
@@ -200,7 +204,7 @@ SOFTWARE.
             if (isFunction(action) && pending && arr && arr.push) {
                 arr.push(action);
             }
-        }        
+        }
     }
 
     /**
@@ -237,6 +241,6 @@ SOFTWARE.
             }
         }
     }
-    
-    
+
+
 })();
