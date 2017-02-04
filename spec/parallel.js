@@ -2,7 +2,7 @@
 
     'use strict';
 
-    const parallel = require('../parallel.js');
+    const parallel = require('../src/parallel.js');
     const vars = require('./vars.js');
 
     var output = '';
