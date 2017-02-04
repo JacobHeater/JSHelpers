@@ -2,7 +2,7 @@
 
     'use strict';
 
-    const $Promise = require('../promise.js');
+    const $Promise = require('../src/promise.js');
     const vars = require('./vars.js');
     const FAIL_MSG = 'Whoops!';
 

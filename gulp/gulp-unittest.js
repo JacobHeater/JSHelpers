@@ -4,7 +4,6 @@
 
     const gulp = require('gulp');
     const gutil = require('gulp-util');
-    const sequence = require('../sequence.js');
     const fs = require('fs');
 
     const files = fs.readdirSync('gulp').filter(f => f.match(/gulp-test/gi));

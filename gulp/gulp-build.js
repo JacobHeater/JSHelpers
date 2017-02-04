@@ -9,11 +9,7 @@
 
     gulp.task('build', () => {
         gulp
-            .src([
-                './parallel.js',
-                './sequence.js',
-                './promise.js'
-            ])
+            .src('src/*.js')
             .pipe(uglify({
                 preserveComments: 'license'
             }))

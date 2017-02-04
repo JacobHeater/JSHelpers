@@ -2,7 +2,7 @@
 
     'use strict';
 
-    const sequence = require('../sequence.js');
+    const sequence = require('../src/sequence.js');
     const vars = require('./vars.js');
 
     var asyncOutput = '';

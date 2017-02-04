@@ -2,7 +2,7 @@
 
     'ust strict';
 
-    const chunk = require('../chunk.js');
+    const chunk = require('../src/chunk.js');
 
     describe('The chunk function breaks arrays into smaller sizes', () => {
 
