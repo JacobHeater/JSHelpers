@@ -189,7 +189,7 @@ Tests that can be run against the helpers are:
 
 ^1 `gulp unit-test` will run the full test suite against all test scenarios in the spec folder.
 
-^2 Denotes any test that has the name gulp-test-*.js in the file name.
+^2 Denotes any test that has the name `gulp-test-*.js` in the file name.
 
 # Distros
 
